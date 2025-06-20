@@ -1,0 +1,6 @@
+@EntityFrameWrokCodefirstApp_HostAddress = http://localhost:5099
+
+GET {{EntityFrameWrokCodefirstApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
