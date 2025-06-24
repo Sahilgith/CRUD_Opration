@@ -6,8 +6,10 @@
         public string Name { get; set; }
 
         //navigation
+        public List<Product> Products { get; set; } = new List<Product>();  
+            
 
-        public List<Product> Products { get; set; } = new();
+
 
     }
 }

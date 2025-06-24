@@ -9,11 +9,11 @@ namespace EntityFrameWrokCodefirstApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PoductController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public PoductController(AppDbContext context)
+        public ProductController(AppDbContext context)
         {
             _context = context; 
         }
@@ -22,6 +22,7 @@ namespace EntityFrameWrokCodefirstApp.Controllers
         [Route("GetProducts")]
 
         public async Task<IActionResult> GetAll() { 
+
             var products = await _context.Products
                 .Include(p => p.Category)
                 .Select(p => new ProductDto
@@ -30,10 +31,11 @@ namespace EntityFrameWrokCodefirstApp.Controllers
                 Name = p.Name,
                 Description = p.Description,    
                 Price = p.Price,    
-                CatagoryName = p.Category.Name
+                CategoryName = p.Category.Name
             }).ToListAsync();
 
             return Ok(products);
+
         }
 
         [HttpGet]
@@ -49,7 +51,7 @@ namespace EntityFrameWrokCodefirstApp.Controllers
                  Name = p.Name, 
                  Description = p.Description,
                  Price = p.Price,   
-                 CatagoryName= p.Category.Name  
+                 CategoryName= p.Category.Name  
              }).FirstOrDefaultAsync();
             
             return product == null? NotFound(): Ok(product);
@@ -60,22 +62,46 @@ namespace EntityFrameWrokCodefirstApp.Controllers
 
         public async Task<IActionResult> Create(CreateProductDto dto) {
 
-            var category = await _context.Categories.FindAsync(dto.CatogoryId);
-            if (category == null) {
-                return BadRequest("Invalid Category");
-            }
+            //var category = await _context.Categories.FindAsync(dto.CatogoryId);
+            //if (category == null)
+            //{
+            //    return BadRequest("Invalid Category");
+            //}
 
             var product = new Product
             {
                 Name = dto.Name,    
                 Description = dto.Description,  
                 Price = dto.Price,  
-                CatogoryId = dto.CatogoryId,
+                CategoryId = dto.CategoryId,
             };
 
             _context.Products.Add(product);
             await  _context.SaveChangesAsync(); 
             return Ok(new {product.Id});
+        }
+
+        [HttpPut]
+        [Route("UpdateProduct")]
+
+        public async Task<IActionResult> Update(int id, CreateProductDto dto) {
+            var product = await _context.Products.FindAsync(id);
+
+            if (product == null)
+                return NotFound();
+
+            //var category = await _context.Categories.FindAsync(dto.CatogoryId);
+            //if (category == null)
+            //    return BadRequest("Invalid Category");
+
+            product.Name = dto.Name;    
+            product.Description = dto.Description;
+            product.Price = dto.Price;
+            product.CategoryId = dto.CategoryId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Prodcut updated Succesfully");
         }
 
         [HttpDelete]

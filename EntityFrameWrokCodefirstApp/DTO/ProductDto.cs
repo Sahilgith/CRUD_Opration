@@ -5,9 +5,9 @@
         public int id {  get; set; }    
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Price { get; set; }
+        public decimal Price { get; set; }
 
-        public string CatagoryName{  get; set; }    //This comes from navigation
+        public string CategoryName{  get; set; }    //This comes from navigation
 
 
 

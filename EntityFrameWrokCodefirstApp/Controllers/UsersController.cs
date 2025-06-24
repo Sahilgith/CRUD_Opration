@@ -24,7 +24,6 @@ namespace EntityFrameWrokCodefirstApp.Controllers
 
         public async Task<ActionResult<List<UserDto>>> GetUser() {
             var users = await _context.Users
-                //.Where(i => )
                 .Select(u => new UserDto
                 {
                     Id = u.Id,

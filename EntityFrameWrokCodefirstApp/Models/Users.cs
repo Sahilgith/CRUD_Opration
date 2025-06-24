@@ -12,5 +12,8 @@ namespace EntityFrameWrokCodefirstApp.Models
 
         public string Password {  get; set; }   
 
+        //Navigation Property 
+        public List<Order> Orders { get; set; }
+
     }
 }
