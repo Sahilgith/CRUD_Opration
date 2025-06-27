@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFrameWrokCodefirstApp.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameWrokCodefirstApp.Models
 {
-    public class Product
+    public class Product : BaseEntity
     {
         public int Id { get; set; } 
         public string Name { get; set; }  
@@ -15,6 +16,6 @@ namespace EntityFrameWrokCodefirstApp.Models
         public int CategoryId { get; set; } //foreign key
         public Category Category { get; set; } //Nvaigationx1
 
-        public List<OrderItem> OrderItems { get; set; } = new();
+        public List<OrderItem> OrderItems { get; set; } 
     }
 }

@@ -34,7 +34,7 @@ namespace EntityFrameWrokCodefirstApp.Controllers
                         Name = p.Name,  
                         Description = p.Description,
                         Price = p.Price,    
-                        CategoryName = c    .Name
+                        CategoryName = c.Name
                         
                     }).ToList()
 
@@ -96,7 +96,7 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             var category = await _context.Categories.FindAsync(id);
             if(category == null) return NotFound();
 
-            _context.Categories.Remove(category);
+            category.IsDeleted= true;   
             await _context.SaveChangesAsync();
             return Ok("Category Deleted");
         }

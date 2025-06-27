@@ -1,5 +1,6 @@
 using EntityFrameWrokCodefirstApp.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +16,12 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+//check if the app isRunning in development environment
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //if yes it enables swagger middleware
+    app.UseSwagger(); //generate the swagger json
+    app.UseSwaggerUI(); //provides the interactive Swagger Web UI
 }
 
 app.UseAuthorization();

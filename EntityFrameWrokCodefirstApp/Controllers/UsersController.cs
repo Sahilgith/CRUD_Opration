@@ -89,14 +89,10 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             var user = await _context.Users.FindAsync(id);
             if(user == null) return NotFound(); 
 
-            _context.Users.Remove(user);
+            user.IsDeleted = true;  
             await _context.SaveChangesAsync();
              return NoContent();    
         }
-
-
-        
-
 
     }
 }

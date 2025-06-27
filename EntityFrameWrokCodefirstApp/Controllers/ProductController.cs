@@ -18,25 +18,25 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             _context = context; 
         }
 
-        [HttpGet]
-        [Route("GetProducts")]
+            [HttpGet]
+            [Route("GetProducts")]
 
-        public async Task<IActionResult> GetAll() { 
+            public async Task<IActionResult> GetAll() { 
 
-            var products = await _context.Products
-                .Include(p => p.Category)
-                .Select(p => new ProductDto
-                {
-                id = p.Id,  
-                Name = p.Name,
-                Description = p.Description,    
-                Price = p.Price,    
-                CategoryName = p.Category.Name
-            }).ToListAsync();
+                var products = await _context.Products
+                    .Include(p => p.Category)   //whith product fetch the category
+                    .Select(p => new ProductDto
+                    {
+                    id = p.Id,  
+                    Name = p.Name,
+                    Description = p.Description,    
+                    Price = p.Price,    
+                    CategoryName = p.Category.Name
+                }).ToListAsync();
 
-            return Ok(products);
+                return Ok(products);
 
-        }
+            }
 
         [HttpGet]
         [Route("GetProduct")]
@@ -44,7 +44,7 @@ namespace EntityFrameWrokCodefirstApp.Controllers
         {
             var product = await _context.Products
              .Include(p => p.Category)
-             .Where(p => p.Id == id)
+             .Where(p => p.Id == id) //ussi product ko leke aayega jiski id match karega
              .Select(p => new ProductDto
              {
                  id = p.Id,
@@ -62,11 +62,11 @@ namespace EntityFrameWrokCodefirstApp.Controllers
 
         public async Task<IActionResult> Create(CreateProductDto dto) {
 
-            //var category = await _context.Categories.FindAsync(dto.CatogoryId);
-            //if (category == null)
-            //{
-            //    return BadRequest("Invalid Category");
-            //}
+            var category = await _context.Categories.FindAsync(dto.CategoryId);
+            if (category == null)
+            {
+                return BadRequest("Invalid Category");
+            }
 
             var product = new Product
             {
@@ -90,9 +90,9 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             if (product == null)
                 return NotFound();
 
-            //var category = await _context.Categories.FindAsync(dto.CatogoryId);
-            //if (category == null)
-            //    return BadRequest("Invalid Category");
+            var category = await _context.Categories.FindAsync(dto.CategoryId);
+            if (category == null)
+                return BadRequest("Invalid Category");
 
             product.Name = dto.Name;    
             product.Description = dto.Description;
@@ -113,12 +113,13 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             if (product == null) 
                 return NotFound();
 
-            _context.Products.Remove(product);  
+            product.IsDeleted = true;    
             await _context.SaveChangesAsync();
 
-            return Ok($"Product with Id {id} has been deleted");
+            return Ok($"Product soft deleted");
         }
 
+        
         
 
         

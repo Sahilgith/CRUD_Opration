@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿    using System.ComponentModel.DataAnnotations;
+using EntityFrameWrokCodefirstApp.Common;
 
 namespace EntityFrameWrokCodefirstApp.Models
 {
-    public class Users
+    public class Users : BaseEntity
     {  
         [Key] //auto incremented column in backend
         public int Id { get; set; }
@@ -12,7 +13,7 @@ namespace EntityFrameWrokCodefirstApp.Models
 
         public string Password {  get; set; }   
 
-        //Navigation Property 
+        //Navigation Property  , One to Many relationship , one user -> many order
         public List<Order> Orders { get; set; }
 
     }

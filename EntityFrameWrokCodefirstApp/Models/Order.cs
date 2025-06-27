@@ -1,6 +1,8 @@
-﻿namespace EntityFrameWrokCodefirstApp.Models
+﻿using EntityFrameWrokCodefirstApp.Common;
+
+namespace EntityFrameWrokCodefirstApp.Models
 {
-    public class Order
+    public class Order : BaseEntity
     {
         public int Id { get; set; } 
         public DateTime OrderDate { get; set; } 
@@ -11,5 +13,6 @@
         //Navigation Property
         public Users User {  get; set; }    
         public List<OrderItem> OrderItems { get; set; } 
+
     }
 }

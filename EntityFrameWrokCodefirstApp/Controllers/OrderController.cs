@@ -19,6 +19,24 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             _context = context;
         }
 
+
+        [HttpGet]
+        [Route("Max-order-by-Product")]
+
+        public async Task<ActionResult<IEnumerable<ProductOrderCountDto>>> GetMaxOrder()
+        {
+            var result = await _context.OrderItems
+                .GroupBy(oi => oi.ProductId)    
+                .Select(g => new ProductOrderCountDto
+                {
+                    ProdcutName = g.First().Product.Name,
+                    OrderCount = g.Count()
+                })
+                .OrderByDescending(p=> p.OrderCount)
+                .ToListAsync();
+
+            return Ok(result);
+        }
         [HttpGet]
         [Route("GetOrders")]
 
@@ -37,7 +55,6 @@ namespace EntityFrameWrokCodefirstApp.Controllers
                         ProductName = oi.Product.Name,
                         Quantity = oi.Quantity
                     }).ToList()
-
                 }).ToListAsync();
             return Ok(orders);
         }
@@ -119,20 +136,26 @@ namespace EntityFrameWrokCodefirstApp.Controllers
         [HttpDelete]
         [Route("DeleteOrder")]
 
-        public async Task<IActionResult> Delete(int id)
-        {
+            public async Task<IActionResult> Delete(int id)
+            {
             var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.Id == id);
+              .Include(o => o.OrderItems)
+              .FirstOrDefaultAsync(o => o.Id == id);
 
-            if (order == null)
+            if (order == null) {
                 return NotFound();
+            }
+            // soft deleted
+            order.IsDeleted = true;
 
-            _context.OrderItems.RemoveRange(order.OrderItems);
-            _context.Orders.Remove(order);
+            foreach (var item in order.OrderItems) {
+                item.IsDeleted = true;
+            }
+
             await _context.SaveChangesAsync();
-            return Ok($"Order with id {id} deleted");
-        }
+            return Ok($"Order with id: {id}  Soft deleted");
+
+         }
 
     }
 }
