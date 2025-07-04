@@ -21,17 +21,25 @@ namespace EntityFrameWrokCodefirstApp.Controllers
 
         [HttpGet]
         [Route("GetUsers")]
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 10;
 
-        public async Task<ActionResult<List<UserDto>>> GetUser() {
             var users = await _context.Users
+                .Where(u => !u.IsDeleted) 
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(u => new UserDto
                 {
                     Id = u.Id,
                     Name = u.Name,
                     ContactNo = u.ContactNo,
-                }).ToListAsync();
+                    
+                })
+                .ToListAsync();
 
-            return Ok(users); 
+            return Ok(users);
         }
 
         [HttpGet]

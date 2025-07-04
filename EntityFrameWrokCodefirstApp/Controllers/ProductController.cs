@@ -18,25 +18,30 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             _context = context; 
         }
 
-            [HttpGet]
-            [Route("GetProducts")]
+        [HttpGet]
+        [Route("GetProducts")]
 
-            public async Task<IActionResult> GetAll() { 
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10) { 
+        
+            if(page <=0) page = 1;  
+            if(pageSize <= 0) pageSize = 10;
 
-                var products = await _context.Products
-                    .Include(p => p.Category)   //whith product fetch the category
-                    .Select(p => new ProductDto
-                    {
-                    id = p.Id,  
+            var products = await _context.Products
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.Category)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new ProductDto
+                {
+                    id = p.Id,
                     Name = p.Name,
-                    Description = p.Description,    
-                    Price = p.Price,    
+                    Description = p.Description,
+                    Price = p.Price,
                     CategoryName = p.Category.Name
                 }).ToListAsync();
 
-                return Ok(products);
-
-            }
+            return Ok(products);
+        }
 
         [HttpGet]
         [Route("GetProduct")]
@@ -118,12 +123,6 @@ namespace EntityFrameWrokCodefirstApp.Controllers
 
             return Ok($"Product soft deleted");
         }
-
-        
-        
-
-        
-
 
     }
 }

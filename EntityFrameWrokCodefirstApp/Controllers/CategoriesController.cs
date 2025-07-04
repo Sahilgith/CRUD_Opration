@@ -18,27 +18,35 @@ namespace EntityFrameWrokCodefirstApp.Controllers
         public CategoriesController(AppDbContext context) { 
           _context = context;
         }
-
+        
         [HttpGet]
         [Route("GetCategories")]
-        public async Task<IActionResult> GetAll() {
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 10;
+
             var categories = await _context.Categories
+                .Where(c => !c.IsDeleted) // Optional: if you're using soft delete
                 .Include(c => c.Products)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(c => new CategoryReadDto
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    Products = c.Products.Select(p => new ProductDto
-                    {
-                        id = p.Id,
-                        Name = p.Name,  
-                        Description = p.Description,
-                        Price = p.Price,    
-                        CategoryName = c.Name
-                        
-                    }).ToList()
-
-                }).ToListAsync();
+                    Products = c.Products
+                        .Where(p => !p.IsDeleted) 
+                        .Select(p => new ProductDto
+                        {
+                            id = p.Id,
+                            Name = p.Name,
+                            Description = p.Description,
+                            Price = p.Price,
+                            CategoryName = c.Name
+                        }).ToList()
+                })
+                .ToListAsync();
 
             return Ok(categories);
         }

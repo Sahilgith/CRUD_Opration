@@ -11,7 +11,9 @@ namespace EntityFrameWrokCodefirstApp.Models
 
         public string ContactNo { get; set; }
 
-        public string Password {  get; set; }   
+        public string Email { get; set; }   
+
+        public string PasswordHash {  get; set; }   
 
         //Navigation Property  , One to Many relationship , one user -> many order
         public List<Order> Orders { get; set; }

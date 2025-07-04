@@ -16,6 +16,6 @@ namespace EntityFrameWrokCodefirstApp.Models
         public int CategoryId { get; set; } //foreign key
         public Category Category { get; set; } //Nvaigationx1
 
-        public List<OrderItem> OrderItems { get; set; } 
+        public List<OrderItem> OrderItems { get; set; }  
     }
 }

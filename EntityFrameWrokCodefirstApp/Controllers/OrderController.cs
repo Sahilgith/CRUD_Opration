@@ -19,32 +19,38 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             _context = context;
         }
 
-
         [HttpGet]
-        [Route("Max-order-by-Product")]
+        [Route("GetMAx")]
 
-        public async Task<ActionResult<IEnumerable<ProductOrderCountDto>>> GetMaxOrder()
-        {
+        public async Task<ActionResult<IEnumerable<ProductAndOrder>>> getmax() {
+
             var result = await _context.OrderItems
-                .GroupBy(oi => oi.ProductId)    
-                .Select(g => new ProductOrderCountDto
+                .GroupBy(x => x.ProductId)
+                .Select(g => new ProductAndOrder
                 {
-                    ProdcutName = g.First().Product.Name,
-                    OrderCount = g.Count()
-                })
-                .OrderByDescending(p=> p.OrderCount)
+                    productname = g.First().Product.Name,
+                    ordercount = g.Count()
+                }).OrderByDescending(x => x.ordercount)
                 .ToListAsync();
-
-            return Ok(result);
+            return result;
         }
+
+
+        
         [HttpGet]
         [Route("GetOrders")]
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 10;
 
-        public async Task<IActionResult> GetAll() { 
-          var orders = await _context.Orders
+            var orders = await _context.Orders
+                .Where(o => !o.IsDeleted) 
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
+                    .ThenInclude(oi => oi.Product)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(o => new OrderReadDto
                 {
                     Id = o.Id,
@@ -55,9 +61,12 @@ namespace EntityFrameWrokCodefirstApp.Controllers
                         ProductName = oi.Product.Name,
                         Quantity = oi.Quantity
                     }).ToList()
-                }).ToListAsync();
+                })
+                .ToListAsync();
+
             return Ok(orders);
         }
+
 
 
         [HttpGet]
@@ -156,6 +165,9 @@ namespace EntityFrameWrokCodefirstApp.Controllers
             return Ok($"Order with id: {id}  Soft deleted");
 
          }
+
+
+        
 
     }
 }
